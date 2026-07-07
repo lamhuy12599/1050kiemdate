@@ -34,7 +34,7 @@
 
     <style>
         @media print {
-            .no-print, #camera-container, button, #themeToggleBtn, .bg-zinc-900 {
+            .no-print, #camera-container, button, #themeToggleBtn, .bg-zinc-900, #oldReportFilter {
                 display: none !important;
             }
             body {
@@ -89,9 +89,23 @@
                 </div>
                 
                 <div class="space-y-4">
-                    <div class="bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700">
-                        <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">👤 Tên Nhân Viên Kiểm Date</label>
-                        <input type="text" id="employeeName" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white dark:bg-zinc-700 dark:text-white" placeholder="Nhập tên của bạn...">
+                    <div class="bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700 space-y-3">
+                        <div>
+                            <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">👤 Tên Nhân Viên Kiểm Date</label>
+                            <input type="text" id="employeeName" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white dark:bg-zinc-700 dark:text-white" placeholder="Nhập tên của bạn...">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">📍 Khu Vực Kiểm Date</label>
+                            <input type="text" id="locationZone" list="zoneOptions" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white dark:bg-zinc-700 dark:text-white" placeholder="Chọn hoặc nhập khu vực...">
+                            <datalist id="zoneOptions">
+                                <option value="Quầy Open Showcase (FF)">
+                                <option value="Tủ Mát (Chilled)">
+                                <option value="Tủ Đông (Frozen)">
+                                <option value="Kệ Khô (Ambient)">
+                                <option value="Gondola Khuyến Mãi">
+                                <option value="Quầy Fastfood">
+                                </datalist>
+                        </div>
                     </div>
 
                     <div>
@@ -145,21 +159,42 @@
 
             <div class="lg:col-span-2 bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700 transition-colors duration-300 print-table-container">
                 <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
-                    <h2 class="text-lg font-semibold text-zinc-800 dark:text-white print:text-xl print:font-bold">Danh Sách Báo Cáo Date Trong Ca</h2>
+                    <div>
+                        <h2 id="tableTitle" class="text-lg font-semibold text-zinc-800 dark:text-white print:text-xl print:font-bold">Danh Sách Báo Cáo Date Trong Ca</h2>
+                        <span id="viewingModeBadge" class="no-print text-xs bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400 px-2 py-0.5 rounded-md font-medium">Chế độ: Ca hiện tại</span>
+                    </div>
                     
                     <div class="no-print flex flex-wrap gap-2">
+                        <button onclick="toggleOldReportFilter()" class="bg-amber-500 text-white font-semibold px-3 py-2 rounded-xl text-sm hover:bg-amber-600 transition shadow-sm">
+                            🔍 Xem Báo Cáo Cũ
+                        </button>
                         <button onclick="window.print()" class="bg-zinc-600 text-white font-medium px-3 py-2 rounded-xl text-sm hover:bg-zinc-700 transition shadow-sm flex items-center gap-1">
                             🖨️ In
                         </button>
                         <button onclick="exportToExcel()" class="bg-emerald-600 text-white font-medium px-3 py-2 rounded-xl text-sm hover:bg-emerald-700 transition shadow-sm">
                             📦 Excel
                         </button>
-                        <button onclick="clearAllData()" class="bg-rose-500 text-white font-medium px-3 py-2 rounded-xl text-sm hover:bg-rose-600 transition shadow-sm">
+                        <button onclick="clearAllData()" id="btnClearAll" class="bg-rose-500 text-white font-medium px-3 py-2 rounded-xl text-sm hover:bg-rose-600 transition shadow-sm">
                             🗑️ Xóa Tất Cả
                         </button>
                         <button onclick="submitDataToSheet()" id="btnSubmitSheet" class="bg-sevGreen-600 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-sevGreen-700 transition shadow-md flex items-center gap-1">
                             🚀 Gửi & Chốt Ca
                         </button>
+                    </div>
+                </div>
+
+                <div id="oldReportFilter" class="hidden no-print bg-zinc-50 dark:bg-zinc-900 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-500 uppercase mb-1">Khu Vực Cần Xem</label>
+                        <input type="text" id="filterZone" list="zoneOptions" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-1.5 text-sm bg-white dark:bg-zinc-700 text-zinc-800 dark:text-white" placeholder="Chọn khu vực...">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-500 uppercase mb-1">Ngày Kiểm Cũ</label>
+                        <input type="date" id="filterDate" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-1.5 text-sm bg-white dark:bg-zinc-700 text-zinc-800 dark:text-white">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="fetchOldReport()" class="flex-1 bg-blue-600 text-white text-sm font-bold py-1.5 rounded-xl hover:bg-blue-700 transition">Tải Báo Cáo</button>
+                        <button onclick="resetToCurrentShift()" class="bg-zinc-400 text-white text-sm font-medium px-3 py-1.5 rounded-xl hover:bg-zinc-500 transition">Trở Về</button>
                     </div>
                 </div>
 
@@ -177,8 +212,8 @@
                                 </th>
                                 <th class="p-3 bg-zinc-800 dark:bg-zinc-950 text-center">Ngày Giờ Quét</th>
                                 <th class="p-3 bg-teal-800 dark:bg-teal-950 text-center">Đổi Trả NCC</th>
-                                <th class="p-3 bg-zinc-700 dark:bg-zinc-900 text-center">Nhân Viên</th>
-                                <th class="p-3 text-center no-print">Xóa</th>
+                                <th class="p-3 bg-zinc-700 dark:bg-zinc-900 text-center">Khu Vực / NV</th>
+                                <th class="p-3 text-center no-print" id="thAction">Xóa</th>
                             </tr>
                         </thead>
                         <tbody id="dateInventoryList"></tbody>
@@ -190,10 +225,12 @@
     </div>
 
     <script>
-        // ⚠️ THAY ĐƯỜNG LINK APPS SCRIPT CỦA BẠN VÀO GIỮA HAI DẤU NHÁY DƯỚI ĐÂY
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVVvQsEgAlD-n0XAtyQS8BpGYQQaVs2glyFalKJnN9b4wYG3zXj03HK3fVxwiNHZaN7w/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydsgDxByV1vhXaNIZVrcp9jc43YK1tAQg9NEikkltLn7JuYqMTf-hwoWDWpFqsJjth_A/exec";
 
         let dateInventory = JSON.parse(localStorage.getItem('date_inventory_return')) || [];
+        let backupCurrentShift = []; // Dùng sao lưu ca hiện tại khi xem báo cáo cũ
+        let isViewingOldReport = false; // Flag kiểm tra chế độ xem báo cáo cũ
+
         let masterData = []; 
         let html5QrcodeScanner = null;
         let sortDirection = null;
@@ -401,8 +438,14 @@
             emptyAlert.classList.add('hidden');
 
             dateInventory.forEach((item, index) => {
-                let expParts = item.expiryDate.split('-');
-                let formattedExp = `${expParts[2]}/${expParts[1]}/${expParts[0]}`;
+                let formattedExp = item.expiryDate;
+                if(item.expiryDate.includes('-')) {
+                    let expParts = item.expiryDate.split('-');
+                    formattedExp = `${expParts[2]}/${expParts[1]}/${expParts[0]}`;
+                }
+
+                // Gộp hiển thị Khu vực & Tên Nhân Viên ở cột cuối để tiết kiệm không gian
+                let locationAndStaff = item.locationZone ? `<b>[${item.locationZone}]</b><br>${item.employeeName}` : item.employeeName;
 
                 tbody.innerHTML += `
                     <tr class="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700/40 transition">
@@ -414,14 +457,22 @@
                         <td class="p-3 text-center font-bold text-sevOrange-600 dark:text-sevOrange-500 bg-orange-50/60 dark:bg-orange-950/20 print:bg-white">${item.pullDate}</td>
                         <td class="p-3 text-center font-mono text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50/50 dark:bg-zinc-900 print:bg-white">${item.timestamp}</td>
                         <td class="p-3 text-center font-semibold text-teal-800 dark:text-teal-400 bg-teal-50/20 dark:bg-teal-950/20 print:bg-white">${item.returnPolicy || '-'}</td>
-                        <td class="p-3 text-center font-medium text-zinc-700 dark:text-zinc-300">${item.employeeName}</td>
-                        <td class="p-3 text-center no-print"><button onclick="deleteItem(${index})" class="text-rose-500 hover:text-rose-700 font-bold">✕</button></td>
+                        <td class="p-3 text-center text-xs text-zinc-700 dark:text-zinc-300">${locationAndStaff}</td>
+                        <td class="p-3 text-center no-print ${isViewingOldReport ? 'hidden' : ''}">
+                            <button onclick="deleteItem(${index})" class="text-rose-500 hover:text-rose-700 font-bold">✕</button>
+                        </td>
                     </tr>`;
             });
         }
 
         function addItem() {
+            if (isViewingOldReport) {
+                alert("Bạn đang ở chế độ xem báo cáo cũ. Hãy nhấn 'Trở Về' để quét tiếp ca hiện tại!");
+                return;
+            }
+
             let employeeName = document.getElementById('employeeName').value.trim();
+            let locationZone = document.getElementById('locationZone').value.trim();
             let barcode = document.getElementById('barcode').value.trim();
             let name = document.getElementById('productName').value.trim();
             let quantity = parseInt(document.getElementById('quantity').value) || 1;
@@ -429,6 +480,7 @@
             let pullType = document.getElementById('pullType').value;
 
             if(!employeeName) { alert("Vui lòng nhập Tên nhân viên trước!"); return; }
+            if(!locationZone) { alert("Vui lòng nhập Khu vực kiểm date trước!"); return; }
             if(!name || !expiryDate) { alert("Vui lòng điền tên sản phẩm và chọn ngày hết hạn!"); return; }
 
             let now = new Date();
@@ -439,7 +491,7 @@
             let timestamp = `${d}/${m}/${y} ${timeStr}`;
 
             let pullDate = calculatePullDate(expiryDate, pullType);
-            let itemData = { barcode, name, quantity, expiryDate, pullType, pullDate, employeeName, timestamp, returnPolicy: currentReturnPolicy };
+            let itemData = { barcode, name, quantity, expiryDate, pullType, pullDate, employeeName, locationZone, timestamp, returnPolicy: currentReturnPolicy };
             
             dateInventory.push(itemData);
             applySort();
@@ -475,6 +527,97 @@
                 playBeep('error');
                 alert("🧹 Đã xóa sạch dữ liệu tạm thời!");
             }
+        }
+
+        // TÍNH NĂNG BÁO CÁO CŨ
+        function toggleOldReportFilter() {
+            const filterDiv = document.getElementById('oldReportFilter');
+            filterDiv.classList.toggle('hidden');
+        }
+
+        async function fetchOldReport() {
+            let zone = document.getElementById('filterZone').value.trim();
+            let date = document.getElementById('filterDate').value;
+
+            if(!zone || !date) {
+                alert("Vui lòng chọn đầy đủ cả Khu Vực và Ngày cần xem báo cáo cũ!");
+                return;
+            }
+
+            // Chuyển định dạng ngày YYYY-MM-DD sang DD/MM/YYYY để truy vấn khớp Sheet nếu cần
+            let dParts = date.split('-');
+            let formattedFilterDate = `${dParts[2]}/${dParts[1]}/${dParts[0]}`;
+
+            const filterDiv = document.getElementById('oldReportFilter');
+            
+            // Sao lưu dữ liệu ca hiện tại nếu đây là lần đầu chuyển chế độ
+            if (!isViewingOldReport) {
+                backupCurrentShift = [...dateInventory];
+            }
+
+            isViewingOldReport = true;
+            document.getElementById('viewingModeBadge').textContent = `Chế độ: Báo cáo cũ [${zone} - ${formattedFilterDate}]`;
+            document.getElementById('viewingModeBadge').className = "no-print text-xs bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 px-2 py-0.5 rounded-md font-medium";
+            document.getElementById('tableTitle').textContent = "Danh Sách Báo Cáo Cũ Đã Truy Xuất";
+            
+            // Ẩn các nút thao tác sửa xóa/gửi để tránh nhầm lẫn dữ liệu cũ
+            document.getElementById('btnSubmitSheet').classList.add('hidden');
+            document.getElementById('btnClearAll').classList.add('hidden');
+            document.getElementById('thAction').classList.add('hidden');
+
+            document.getElementById('dateInventoryList').innerHTML = `<tr><td colspan="10" class="text-center py-6 text-blue-500 animate-pulse font-medium">⏳ Đang tải dữ liệu báo cáo cũ từ Google Sheets...</td></tr>`;
+
+            try {
+                // Tạo request GET/POST gửi đi kèm parameter lọc
+                // Phụ thuộc vào Apps Script của bạn chấp nhận cấu trúc query nào, ở đây ví dụ gửi POST action: "get_old_report"
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: "get_old_report",
+                        zone: zone,
+                        date: date // hoặc formattedFilterDate tùy bạn khớp trên App script
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if(result.status === "success" && result.data) {
+                        dateInventory = result.data; // nạp dữ liệu cũ vào mảng chung để hàm In / Excel chạy luôn
+                        renderTable();
+                        if(dateInventory.length === 0) {
+                            document.getElementById('emptyAlert').textContent = "Không tìm thấy dữ liệu kiểm date trùng khớp cho ngày và khu vực này.";
+                            document.getElementById('emptyAlert').classList.remove('hidden');
+                        }
+                    } else {
+                        alert("Không tìm thấy dữ liệu hoặc cấu hình Apps Script phản hồi lỗi: " + result.message);
+                        resetToCurrentShift();
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                alert("❌ Lỗi kết nối! Hãy chắc chắn Apps Script của bạn đã được nâng cấp hàm POST để xử lý hành động 'get_old_report'.");
+                resetToCurrentShift();
+            }
+        }
+
+        function resetToCurrentShift() {
+            isViewingOldReport = false;
+            dateInventory = [...backupCurrentShift];
+            
+            document.getElementById('viewingModeBadge').textContent = `Chế độ: Ca hiện tại`;
+            document.getElementById('viewingModeBadge').className = "no-print text-xs bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400 px-2 py-0.5 rounded-md font-medium";
+            document.getElementById('tableTitle').textContent = "Danh Sách Báo Cáo Date Trong Ca";
+            
+            document.getElementById('btnSubmitSheet').classList.remove('hidden');
+            document.getElementById('btnClearAll').classList.remove('hidden');
+            document.getElementById('thAction').classList.remove('hidden');
+            document.getElementById('oldReportFilter').classList.add('hidden');
+            document.getElementById('emptyAlert').textContent = "Chưa có dữ liệu kiểm date nào được nhập.";
+
+            renderTable();
         }
 
         async function submitDataToSheet() {
@@ -537,20 +680,26 @@
                 { header: "Ngày Phải Rút", key: "pullDate", width: 18 },
                 { header: "Ngày Giờ Quét", key: "timestamp", width: 22 },
                 { header: "Điều Kiện Đổi Trả (NCC)", key: "returnPolicy", width: 22 },
+                { header: "Khu Vực", key: "locationZone", width: 20 },
                 { header: "Nhân Viên Kiểm", key: "employeeName", width: 18 }
             ];
 
             dateInventory.forEach(item => {
-                let expParts = item.expiryDate.split('-');
+                let formattedExp = item.expiryDate;
+                if(item.expiryDate.includes('-')) {
+                    let expParts = item.expiryDate.split('-');
+                    formattedExp = `${expParts[2]}/${expParts[1]}/${expParts[0]}`;
+                }
                 worksheet.addRow({
                     barcode: item.barcode || "---",
                     name: item.name,
                     quantity: item.quantity,
-                    expiryDate: `${expParts[2]}/${expParts[1]}/${expParts[0]}`,
+                    expiryDate: formattedExp,
                     pullType: item.pullType,
                     pullDate: item.pullDate,
                     timestamp: item.timestamp,
                     returnPolicy: item.returnPolicy || "-",
+                    locationZone: item.locationZone || "---",
                     employeeName: item.employeeName
                 });
             });
@@ -584,6 +733,7 @@
                 row.getCell('pullDate').alignment = { vertical: 'middle', horizontal: 'center' };
                 row.getCell('timestamp').alignment = { vertical: 'middle', horizontal: 'center' };
                 row.getCell('returnPolicy').alignment = { vertical: 'middle', horizontal: 'center' };
+                row.getCell('locationZone').alignment = { vertical: 'middle', horizontal: 'center' };
                 row.getCell('employeeName').alignment = { vertical: 'middle', horizontal: 'center' };
 
                 row.getCell('quantity').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF4F4F5' } };
@@ -602,7 +752,8 @@
             const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `Bao_Cao_Date_7Eleven_${new Date().toISOString().slice(0,10)}.xlsx`;
+            let filePrefix = isViewingOldReport ? "Bao_Cao_Date_Cu_" : "Bao_Cao_Date_7Eleven_";
+            link.download = `${filePrefix}${new Date().toISOString().slice(0,10)}.xlsx`;
             link.click();
             URL.revokeObjectURL(link.href);
         }
