@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1050-MilleniumQ4</title>
+    
+    <link class="no-print" rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/7-eleven_logo.svg/960px-7-eleven_logo.svg.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        sevGreen: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            600: '#00843D',
+                            700: '#006c31',
+                            950: '#022c16',
+                        },
+                        sevOrange: {
+                            500: '#EE2E24',
+                            600: '#d62219',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <style>
+        @media print {
+            .no-print, #camera-container, button, #themeToggleBtn, .bg-zinc-900 {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .print-full-width {
+                grid-template-columns: 100% !important;
+                width: 100% !important;
+            }
+            .print-table-container {
+                width: 100% !important;
+                border: none !important;
+                padding: 0 !important;
+            }
+            tr, td, th {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color: black !important;
+            }
+            thead tr th {
+                color: white !important;
+                background-color: #00843D !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-zinc-100 dark:bg-zinc-900 min-h-screen p-4 md:p-8 text-zinc-800 dark:text-zinc-100 transition-colors duration-300">
+
+    <div class="max-w-7xl mx-auto">
+        <div class="no-print bg-zinc-900 dark:bg-zinc-950 text-white p-5 rounded-2xl shadow-md mb-6 border-b-4 border-sevOrange-500 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/7-eleven_logo.svg/960px-7-eleven_logo.svg.png" alt="Logo" class="w-14 h-14 rounded-2xl object-cover bg-white p-0.5 shadow-inner shrink-0">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-wide text-white">1050-MilleniumQ4 <span class="text-sevOrange-500">|</span> <span class="text-emerald-400">WEBAPP KIỂM DATE NỘI BỘ</span></h1>
+                    <p class="text-zinc-400 text-sm mt-0.5">Thực hiện bởi Lâm Huy</p>
+                </div>
+            </div>
+            <button onclick="toggleTheme()" id="themeToggleBtn" class="bg-zinc-800 hover:bg-zinc-700 text-emerald-400 dark:text-emerald-300 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-sm shrink-0 self-end sm:self-auto">
+                🌙 Chế độ tối
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-full-width">
+            
+            <div class="no-print bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700 h-fit transition-colors duration-300">
+                <div class="flex items-center justify-between mb-4 border-b dark:border-zinc-700 pb-2">
+                    <h2 class="text-lg font-semibold text-zinc-800 dark:text-white">Thông Tin Kiểm Date</h2>
+                    <span id="syncStatus" class="text-xs bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 px-2 py-0.5 rounded-full font-medium animate-pulse">⏳ Đang tải Danh mục...</span>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700">
+                        <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">👤 Tên Nhân Viên Kiểm Date</label>
+                        <input type="text" id="employeeName" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white dark:bg-zinc-700 dark:text-white" placeholder="Nhập tên của bạn...">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">Mã Barcode</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="barcode" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-mono bg-white dark:bg-zinc-700 dark:text-white" placeholder="Nhập hoặc quét mã...">
+                            <button onclick="toggleCamera()" class="bg-zinc-800 dark:bg-zinc-950 text-white px-3 py-2 rounded-xl text-xs font-medium hover:bg-zinc-700 transition">📷 Camera</button>
+                        </div>
+                        <div id="camera-container" class="hidden border-2 border-dashed border-zinc-400 dark:border-zinc-600 rounded-xl p-2 bg-zinc-50 dark:bg-zinc-900 mt-2">
+                            <div id="reader" class="w-full rounded-xl overflow-hidden"></div>
+                            <button onclick="stopCamera()" class="w-full mt-2 bg-rose-500 text-white text-xs py-1.5 rounded-xl">Tắt Camera</button>
+                        </div>
+                        <p id="memoryAlert" class="text-xs mt-1 min-h-[16px] font-medium text-zinc-400 dark:text-zinc-400"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">Tên Sản Phẩm</label>
+                        <input type="text" id="productName" list="productOptions" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-emerald-50/20 dark:bg-zinc-700 dark:text-white" placeholder="Chọn hoặc nhập tên sản phẩm...">
+                        <datalist id="productOptions"></datalist>
+                        
+                        <div class="text-xs font-medium text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900 p-2 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 mt-1.5 flex justify-between items-center">
+                            <span>🔄 Chính sách Đổi trả NCC:</span>
+                            <span id="returnPolicyView" class="font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 px-2 py-0.5 rounded-md border border-teal-200 dark:border-teal-900">-</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">Số Lượng Sản Phẩm</label>
+                        <input type="number" id="quantity" min="1" value="1" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-bold text-zinc-700 dark:text-white bg-white dark:bg-zinc-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">Ngày hết hạn (Expiry Date)</label>
+                        <input type="date" id="expiryDate" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-bold text-zinc-700 dark:text-white bg-white dark:bg-zinc-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">Quy định rút hàng</label>
+                        <select id="pullType" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 bg-emerald-50/40 dark:bg-zinc-700 font-bold text-sevGreen-700 dark:text-emerald-400">
+                            <option value="H-2">H-2 (Rút trước khi hết date 2 giờ)</option>
+                            <option value="D-1">D-1 (Rút trước khi hết date 1 ngày)</option>
+                            <option value="D-3">D-3 (Rút trước khi hết date 3 ngày)</option>
+                            <option value="D-7">D-7 (Rút trước khi hết date 7 ngày)</option>
+                            <option value="D-15">D-15 (Rút trước khi hết date 15 ngày)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="addItem()" class="w-full bg-sevOrange-500 text-white font-bold py-2.5 rounded-xl text-sm hover:bg-sevOrange-600 transition shadow-sm mt-2 tracking-wide">Ghi Nhận Kiểm Date (Tạm Tính)</button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700 transition-colors duration-300 print-table-container">
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg font-semibold text-zinc-800 dark:text-white print:text-xl print:font-bold">Danh Sách Báo Cáo Date Trong Ca</h2>
+                    
+                    <div class="no-print flex flex-wrap gap-2">
+                        <button onclick="window.print()" class="bg-zinc-600 text-white font-medium px-3 py-2 rounded-xl text-sm hover:bg-zinc-700 transition shadow-sm flex items-center gap-1">
+                            🖨️ In
+                        </button>
+                        <button onclick="exportToExcel()" class="bg-emerald-600 text-white font-medium px-3 py-2 rounded-xl text-sm hover:bg-emerald-700 transition shadow-sm">
+                            📦 Excel
+                        </button>
+                        <button onclick="clearAllData()" class="bg-rose-500 text-white font-medium px-3 py-2 rounded-xl text-sm hover:bg-rose-600 transition shadow-sm">
+                            🗑️ Xóa Tất Cả
+                        </button>
+                        <button onclick="submitDataToSheet()" id="btnSubmitSheet" class="bg-sevGreen-600 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-sevGreen-700 transition shadow-md flex items-center gap-1">
+                            🚀 Gửi & Chốt Ca
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-sevGreen-600 dark:bg-sevGreen-950 border-b border-sevGreen-700 text-white font-medium">
+                                <th class="p-3">Barcode</th>
+                                <th class="p-3">Tên Sản Phẩm</th>
+                                <th class="p-3 text-center bg-sevGreen-700 dark:bg-zinc-900">SL</th>
+                                <th class="p-3">Ngày Hết Hạn</th>
+                                <th class="p-3 text-center bg-emerald-900 dark:bg-emerald-950">Mã Rút</th>
+                                <th onclick="toggleSortPullDate()" class="p-3 text-center bg-sevOrange-500 text-white font-bold cursor-pointer select-none hover:bg-sevOrange-600 transition shadow-inner">
+                                    Ngày Phải Rút <span id="sortIcon" class="text-xs ml-0.5">↕</span>
+                                </th>
+                                <th class="p-3 bg-zinc-800 dark:bg-zinc-950 text-center">Ngày Giờ Quét</th>
+                                <th class="p-3 bg-teal-800 dark:bg-teal-950 text-center">Đổi Trả NCC</th>
+                                <th class="p-3 bg-zinc-700 dark:bg-zinc-900 text-center">Nhân Viên</th>
+                                <th class="p-3 text-center no-print">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dateInventoryList"></tbody>
+                    </table>
+                </div>
+                <div id="emptyAlert" class="text-center py-8 text-zinc-400 dark:text-zinc-500 text-sm">Chưa có dữ liệu kiểm date nào được nhập.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ THAY ĐƯỜNG LINK APPS SCRIPT CỦA BẠN VÀO GIỮA HAI DẤU NHÁY DƯỚI ĐÂY
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVVvQsEgAlD-n0XAtyQS8BpGYQQaVs2glyFalKJnN9b4wYG3zXj03HK3fVxwiNHZaN7w/exec";
+
+        let dateInventory = JSON.parse(localStorage.getItem('date_inventory_return')) || [];
+        let masterData = []; 
+        let html5QrcodeScanner = null;
+        let sortDirection = null;
+        let currentReturnPolicy = "-"; 
+
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            updateThemeButton();
+        }
+
+        function updateThemeButton() {
+            const btn = document.getElementById('themeToggleBtn');
+            if (document.documentElement.classList.contains('dark')) {
+                btn.innerHTML = '☀️ Chế độ sáng';
+            } else {
+                btn.innerHTML = '🌙 Chế độ tối';
+            }
+        }
+        updateThemeButton();
+
+        window.addEventListener('beforeprint', () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.dataset.wasDark = "true";
+            }
+        });
+
+        window.addEventListener('afterprint', () => {
+            if (document.documentElement.dataset.wasDark === "true") {
+                document.documentElement.classList.add('dark');
+                delete document.documentElement.dataset.wasDark;
+            }
+        });
+
+        function playBeep(type = 'success') {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                if (type === 'scan') {
+                    osc.frequency.setValueAtTime(1000, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(); osc.stop(ctx.currentTime + 0.08);
+                } else if (type === 'success') {
+                    osc.frequency.setValueAtTime(1300, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(); osc.stop(ctx.currentTime + 0.15);
+                } else if (type === 'error') {
+                    osc.frequency.setValueAtTime(400, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(); osc.stop(ctx.currentTime + 0.3);
+                }
+            } catch (e) {}
+        }
+
+        async function fetchMasterData() {
+            const statusEl = document.getElementById('syncStatus');
+            try {
+                const response = await fetch(SCRIPT_URL);
+                if (response.ok) {
+                    masterData = await response.json();
+                    const datalist = document.getElementById('productOptions');
+                    datalist.innerHTML = "";
+                    masterData.forEach(item => {
+                        let option = document.createElement('option');
+                        option.value = item.name;
+                        datalist.appendChild(option);
+                    });
+                    statusEl.textContent = `✅ Đã tải ${masterData.length} SP`;
+                    statusEl.className = "text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 px-2 py-0.5 rounded-full font-medium";
+                }
+            } catch (err) {
+                statusEl.textContent = "❌ Lỗi tải danh mục";
+                statusEl.className = "text-xs bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 px-2 py-0.5 rounded-full font-medium";
+            }
+        }
+
+        document.getElementById('barcode').addEventListener('input', function(e) {
+            let code = e.target.value.trim();
+            let alertBox = document.getElementById('memoryAlert');
+            if (code.length === 0) { alertBox.textContent = ""; return; }
+
+            let matchedMaster = masterData.find(item => item.barcode === code);
+            if (matchedMaster) {
+                document.getElementById('productName').value = matchedMaster.name;
+                currentReturnPolicy = matchedMaster.returnPolicy || "-";
+                document.getElementById('returnPolicyView').textContent = currentReturnPolicy;
+                alertBox.textContent = "📦 Khớp dữ liệu danh mục hệ thống!";
+                alertBox.className = "text-xs mt-1 min-h-[16px] font-medium text-emerald-600 dark:text-emerald-400";
+                playBeep('scan'); 
+                return;
+            }
+
+            let found = [...dateInventory].reverse().find(item => item.barcode === code && item.barcode !== "");
+            if (found) {
+                document.getElementById('productName').value = found.name;
+                currentReturnPolicy = found.returnPolicy || "-";
+                document.getElementById('returnPolicyView').textContent = currentReturnPolicy;
+                alertBox.textContent = "⚡ Tự động lấy tên từ lịch sử ca trực!";
+                alertBox.className = "text-xs mt-1 min-h-[16px] font-medium text-teal-600 dark:text-teal-400";
+                playBeep('scan');
+            } else {
+                alertBox.textContent = "🔍 Mã mới hoàn toàn (chưa có dữ liệu)";
+                alertBox.className = "text-xs mt-1 min-h-[16px] font-medium text-zinc-400 dark:text-zinc-500";
+                currentReturnPolicy = "-";
+                document.getElementById('returnPolicyView').textContent = "-";
+            }
+        });
+
+        document.getElementById('productName').addEventListener('input', function(e) {
+            let name = e.target.value.trim();
+            let matchedMaster = masterData.find(item => item.name === name);
+            if (matchedMaster) {
+                currentReturnPolicy = matchedMaster.returnPolicy || "-";
+                if (!document.getElementById('barcode').value.trim()) {
+                    document.getElementById('barcode').value = matchedMaster.barcode;
+                }
+            } else {
+                currentReturnPolicy = "-";
+            }
+            document.getElementById('returnPolicyView').textContent = currentReturnPolicy;
+        });
+
+        function toggleCamera() {
+            const container = document.getElementById('camera-container');
+            if (container.classList.contains('hidden')) { container.classList.remove('hidden'); startCamera(); }
+            else { stopCamera(); }
+        }
+
+        function startCamera() {
+            const config = { fps: 15, qrbox: { width: 260, height: 140 }, formatsToSupport: [ Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.QR_CODE ] };
+            html5QrcodeScanner = new Html5Qrcode("reader");
+            html5QrcodeScanner.start({ facingMode: "environment" }, config, (decodedText) => {
+                let barcodeInput = document.getElementById('barcode');
+                barcodeInput.value = decodedText;
+                barcodeInput.dispatchEvent(new Event('input'));
+                stopCamera();
+            }, (err) => {}).catch(err => { alert("Yêu cầu bảo mật HTTPS để dùng Camera."); stopCamera(); });
+        }
+
+        function stopCamera() {
+            const container = document.getElementById('camera-container');
+            if (container) container.classList.add('hidden');
+            if (html5QrcodeScanner) { html5QrcodeScanner.stop().then(() => { html5QrcodeScanner = null; }); }
+        }
+
+        function calculatePullDate(expiryDateStr, pullType) {
+            if(!expiryDateStr) return "";
+            let expDate = new Date(expiryDateStr);
+            let daysToSubtract = 0;
+            if (pullType === "D-1") daysToSubtract = 1;
+            else if (pullType === "D-3") daysToSubtract = 3;
+            else if (pullType === "D-7") daysToSubtract = 7;
+            else if (pullType === "D-15") daysToSubtract = 15;
+
+            expDate.setDate(expDate.getDate() - daysToSubtract);
+            let d = String(expDate.getDate()).padStart(2, '0');
+            let m = String(expDate.getMonth() + 1).padStart(2, '0');
+            let y = expDate.getFullYear();
+            return `${d}/${m}/${y}`;
+        }
+
+        function applySort() {
+            if (!sortDirection) return;
+            dateInventory.sort((a, b) => {
+                let pA = a.pullDate.split('/'); let pB = b.pullDate.split('/');
+                let dA = new Date(pA[2], pA[1] - 1, pA[0]); let dB = new Date(pB[2], pB[1] - 1, pB[0]);
+                return sortDirection === 'asc' ? dA - dB : dB - dA;
+            });
+        }
+
+        function toggleSortPullDate() {
+            sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
+            applySort(); renderTable();
+        }
+
+        function renderTable() {
+            let tbody = document.getElementById('dateInventoryList');
+            let emptyAlert = document.getElementById('emptyAlert');
+            tbody.innerHTML = "";
+            
+            const sortIconEl = document.getElementById('sortIcon');
+            if (sortIconEl) { sortIconEl.textContent = sortDirection === 'asc' ? ' ▲' : (sortDirection === 'desc' ? ' ▼' : ' ↕'); }
+
+            if(dateInventory.length === 0) { emptyAlert.classList.remove('hidden'); return; }
+            emptyAlert.classList.add('hidden');
+
+            dateInventory.forEach((item, index) => {
+                let expParts = item.expiryDate.split('-');
+                let formattedExp = `${expParts[2]}/${expParts[1]}/${expParts[0]}`;
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700/40 transition">
+                        <td class="p-3 font-mono text-xs text-zinc-500 dark:text-zinc-400">${item.barcode || '---'}</td>
+                        <td class="p-3 font-medium text-zinc-800 dark:text-zinc-200">${item.name}</td>
+                        <td class="p-3 text-center font-bold text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900/40 print:bg-white">${item.quantity}</td>
+                        <td class="p-3 font-medium text-zinc-600 dark:text-zinc-300">${formattedExp}</td>
+                        <td class="p-3 text-center font-bold text-sevGreen-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-zinc-900 print:bg-white">${item.pullType}</td>
+                        <td class="p-3 text-center font-bold text-sevOrange-600 dark:text-sevOrange-500 bg-orange-50/60 dark:bg-orange-950/20 print:bg-white">${item.pullDate}</td>
+                        <td class="p-3 text-center font-mono text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50/50 dark:bg-zinc-900 print:bg-white">${item.timestamp}</td>
+                        <td class="p-3 text-center font-semibold text-teal-800 dark:text-teal-400 bg-teal-50/20 dark:bg-teal-950/20 print:bg-white">${item.returnPolicy || '-'}</td>
+                        <td class="p-3 text-center font-medium text-zinc-700 dark:text-zinc-300">${item.employeeName}</td>
+                        <td class="p-3 text-center no-print"><button onclick="deleteItem(${index})" class="text-rose-500 hover:text-rose-700 font-bold">✕</button></td>
+                    </tr>`;
+            });
+        }
+
+        function addItem() {
+            let employeeName = document.getElementById('employeeName').value.trim();
+            let barcode = document.getElementById('barcode').value.trim();
+            let name = document.getElementById('productName').value.trim();
+            let quantity = parseInt(document.getElementById('quantity').value) || 1;
+            let expiryDate = document.getElementById('expiryDate').value;
+            let pullType = document.getElementById('pullType').value;
+
+            if(!employeeName) { alert("Vui lòng nhập Tên nhân viên trước!"); return; }
+            if(!name || !expiryDate) { alert("Vui lòng điền tên sản phẩm và chọn ngày hết hạn!"); return; }
+
+            let now = new Date();
+            let d = String(now.getDate()).padStart(2, '0');
+            let m = String(now.getMonth() + 1).padStart(2, '0');
+            let y = now.getFullYear();
+            let timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            let timestamp = `${d}/${m}/${y} ${timeStr}`;
+
+            let pullDate = calculatePullDate(expiryDate, pullType);
+            let itemData = { barcode, name, quantity, expiryDate, pullType, pullDate, employeeName, timestamp, returnPolicy: currentReturnPolicy };
+            
+            dateInventory.push(itemData);
+            applySort();
+
+            localStorage.setItem('date_inventory_return', JSON.stringify(dateInventory));
+            renderTable();
+            playBeep('success');
+
+            document.getElementById('barcode').value = "";
+            document.getElementById('productName').value = "";
+            document.getElementById('quantity').value = "1";
+            document.getElementById('expiryDate').value = "";
+            document.getElementById('memoryAlert').textContent = "";
+            currentReturnPolicy = "-";
+            document.getElementById('returnPolicyView').textContent = "-";
+        }
+
+        function deleteItem(index) {
+            dateInventory.splice(index, 1);
+            localStorage.setItem('date_inventory_return', JSON.stringify(dateInventory));
+            renderTable();
+        }
+
+        function clearAllData() {
+            if (dateInventory.length === 0) {
+                alert("Bảng dữ liệu đã trống sẵn rồi!");
+                return;
+            }
+            if (confirm("⚠️ BẠN CÓ CHẮC CHẮN MUỐN XÓA TẤT CẢ DỮ LIỆU ĐÃ QUÉT?\nHành động này không thể hoàn tác nếu chưa gửi lên Sheet hoặc xuất Excel!")) {
+                dateInventory = [];
+                localStorage.removeItem('date_inventory_return');
+                renderTable();
+                playBeep('error');
+                alert("🧹 Đã xóa sạch dữ liệu tạm thời!");
+            }
+        }
+
+        async function submitDataToSheet() {
+            if (dateInventory.length === 0) {
+                alert("Không có dữ liệu nào trong bảng tạm để gửi!");
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmitSheet');
+            if (!confirm(`Bạn muốn đồng bộ toàn bộ ${dateInventory.length} dòng dữ liệu này lên hệ thống và chốt ca chứ?`)) return;
+
+            btn.disabled = true;
+            btn.innerHTML = "⏳ Đang gửi dữ liệu...";
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+                    body: JSON.stringify({ action: "sync_batch", data: dateInventory })
+                });
+
+                const resText = await response.text();
+                const resJson = JSON.parse(resText);
+
+                if (resJson.status === "success") {
+                    alert(`🚀 Đồng bộ thành công! ${resJson.message}`);
+                    dateInventory = [];
+                    localStorage.removeItem('date_inventory_return');
+                    renderTable();
+                    playBeep('success');
+                } else {
+                    alert("❌ Lỗi từ hệ thống Sheet: " + resJson.message);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("❌ Lỗi kết nối! Bạn hãy kiểm tra lại cấu hình Deploy trên Apps Script đã ở chế độ 'Anyone' chưa, hoặc kiểm tra lại đường dẫn SCRIPT_URL.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = "🚀 Gửi & Chốt Ca";
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        async function exportToExcel() {
+            if(dateInventory.length === 0) { alert("Không có dữ liệu để xuất file!"); return; }
+
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet("Bao_Cao_Date");
+
+            worksheet.columns = [
+                { header: "Mã Barcode", key: "barcode", width: 18 },
+                { header: "Tên Sản Phẩm", key: "name", width: 35 },
+                { header: "Số Lượng", key: "quantity", width: 10 },
+                { header: "Ngày Hết Hạn", key: "expiryDate", width: 16 },
+                { header: "Quy Định Rút", key: "pullType", width: 15 },
+                { header: "Ngày Phải Rút", key: "pullDate", width: 18 },
+                { header: "Ngày Giờ Quét", key: "timestamp", width: 22 },
+                { header: "Điều Kiện Đổi Trả (NCC)", key: "returnPolicy", width: 22 },
+                { header: "Nhân Viên Kiểm", key: "employeeName", width: 18 }
+            ];
+
+            dateInventory.forEach(item => {
+                let expParts = item.expiryDate.split('-');
+                worksheet.addRow({
+                    barcode: item.barcode || "---",
+                    name: item.name,
+                    quantity: item.quantity,
+                    expiryDate: `${expParts[2]}/${expParts[1]}/${expParts[0]}`,
+                    pullType: item.pullType,
+                    pullDate: item.pullDate,
+                    timestamp: item.timestamp,
+                    returnPolicy: item.returnPolicy || "-",
+                    employeeName: item.employeeName
+                });
+            });
+
+            const headerRow = worksheet.getRow(1);
+            headerRow.height = 30;
+            headerRow.eachCell((cell) => {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF00843D' } }; 
+                cell.font = { name: 'Segoe UI', color: { argb: 'FFFFFFFF' }, bold: true, size: 11 };
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                cell.border = { bottom: { style: 'medium', color: { argb: 'FFEE2E24' } } }; 
+            });
+
+            worksheet.eachRow((row, rowNumber) => {
+                if (rowNumber === 1) return;
+                row.height = 24;
+
+                row.eachCell((cell) => {
+                    cell.font = { name: 'Segoe UI', size: 10 };
+                    cell.alignment = { vertical: 'middle' };
+                    cell.border = {
+                        bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+                        right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+                    };
+                });
+
+                row.getCell('barcode').alignment = { vertical: 'middle', horizontal: 'center' };
+                row.getCell('quantity').alignment = { vertical: 'middle', horizontal: 'center' };
+                row.getCell('expiryDate').alignment = { vertical: 'middle', horizontal: 'center' };
+                row.getCell('pullType').alignment = { vertical: 'middle', horizontal: 'center' };
+                row.getCell('pullDate').alignment = { vertical: 'middle', horizontal: 'center' };
+                row.getCell('timestamp').alignment = { vertical: 'middle', horizontal: 'center' };
+                row.getCell('returnPolicy').alignment = { vertical: 'middle', horizontal: 'center' };
+                row.getCell('employeeName').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                row.getCell('quantity').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF4F4F5' } };
+                
+                row.getCell('pullType').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };
+                row.getCell('pullType').font = { name: 'Segoe UI', bold: true, color: { argb: 'FF00843D' } };
+
+                row.getCell('pullDate').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFE4E1' } }; 
+                row.getCell('pullDate').font = { name: 'Segoe UI', bold: true, color: { argb: 'FFD62219' } };
+
+                row.getCell('returnPolicy').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFCCFBF1' } };
+                row.getCell('returnPolicy').font = { name: 'Segoe UI', bold: true, color: { argb: 'FF0F766E' } };
+            });
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Bao_Cao_Date_7Eleven_${new Date().toISOString().slice(0,10)}.xlsx`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        renderTable();
+        fetchMasterData();
+    </script>
+</body>
+</html>
