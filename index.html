@@ -95,9 +95,8 @@
                             <input type="text" id="employeeName" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white dark:bg-zinc-700 dark:text-white" placeholder="Nhập tên của bạn...">
                         </div>
                         <div>
-                            <!-- Ô NHẬP KHU VỰC: Nhân viên tự nhập tay hoàn toàn tự do -->
                             <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">📍 Khu Vực Kiểm Date</label>
-                            <input type="text" id="locationZone" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white dark:bg-zinc-700 dark:text-white" placeholder="Nhập tự do (Ví dụ: Kệ 1, Quầy Food...)">
+                            <input type="text" id="locationZone" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white dark:bg-zinc-700 dark:text-white" placeholder="Nhập tự do (Ví dụ: Kệ bánh mì, Đảo 1...)">
                         </div>
                     </div>
 
@@ -176,7 +175,6 @@
                     </div>
                 </div>
 
-                <!-- DROPDOWN KHU VỰC CŨ: Sẽ tự động lấy từ lịch sử trên Google Sheet đổ vào đây -->
                 <div id="oldReportFilter" class="hidden no-print bg-zinc-50 dark:bg-zinc-900 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                     <div>
                         <label class="block text-xs font-semibold text-zinc-500 uppercase mb-1">Khu Vực Cần Xem</label>
@@ -221,11 +219,11 @@
     </div>
 
     <script>
-        // DÁN URL DEPLOY MỚI VÀO ĐÂY
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwTjJy_vHTFLfYb8ZSrAkMEE3lsglfjvT_7qUao6CSyyrc7IXMjFBzWV9GbcCbFoQtMw/exec";
+        // CHÚ Ý: Bạn bắt buộc phải dán URL mới sau khi Deploy Code.gs vào đây!
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzaeC1CeX2rKopOdgohkEQxknpz97kxHH5i9jz63hQ3JQZA5rLekspyGzZcic6PxHjoAQ/exec";
 
-        let dateInventory = JSON.parse(localStorage.getItem('date_inventory_return')) || [];
-        let backupCurrentShift = []; 
+        let currentShiftData = JSON.parse(localStorage.getItem('date_inventory_return')) || [];
+        let dateInventory = [...currentShiftData]; 
         let isViewingOldReport = false; 
 
         let masterData = []; 
@@ -252,27 +250,9 @@
 
         function updateThemeButton() {
             const btn = document.getElementById('themeToggleBtn');
-            if (document.documentElement.classList.contains('dark')) {
-                btn.innerHTML = '☀️ Chế độ sáng';
-            } else {
-                btn.innerHTML = '🌙 Chế độ tối';
-            }
+            btn.innerHTML = document.documentElement.classList.contains('dark') ? '☀️ Chế độ sáng' : '🌙 Chế độ tối';
         }
         updateThemeButton();
-
-        window.addEventListener('beforeprint', () => {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.dataset.wasDark = "true";
-            }
-        });
-
-        window.addEventListener('afterprint', () => {
-            if (document.documentElement.dataset.wasDark === "true") {
-                document.documentElement.classList.add('dark');
-                delete document.documentElement.dataset.wasDark;
-            }
-        });
 
         function playBeep(type = 'success') {
             try {
@@ -281,28 +261,21 @@
                 const gain = ctx.createGain();
                 osc.type = 'sine';
                 if (type === 'scan') {
-                    osc.frequency.setValueAtTime(1000, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    osc.frequency.setValueAtTime(1000, ctx.currentTime); gain.gain.setValueAtTime(0.15, ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
-                    osc.connect(gain); gain.connect(ctx.destination);
-                    osc.start(); osc.stop(ctx.currentTime + 0.08);
+                    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.08);
                 } else if (type === 'success') {
-                    osc.frequency.setValueAtTime(1300, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    osc.frequency.setValueAtTime(1300, ctx.currentTime); gain.gain.setValueAtTime(0.12, ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-                    osc.connect(gain); gain.connect(ctx.destination);
-                    osc.start(); osc.stop(ctx.currentTime + 0.15);
+                    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.15);
                 } else if (type === 'error') {
-                    osc.frequency.setValueAtTime(400, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    osc.frequency.setValueAtTime(400, ctx.currentTime); gain.gain.setValueAtTime(0.2, ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-                    osc.connect(gain); gain.connect(ctx.destination);
-                    osc.start(); osc.stop(ctx.currentTime + 0.3);
+                    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.3);
                 }
             } catch (e) {}
         }
 
-        // TẢI TOÀN BỘ DỮ LIỆU ĐỘNG TỪ SHEET VỀ KHỞI TẠO DROPDOWN VÀ SẢN PHẨM
         async function fetchSystemData() {
             const statusEl = document.getElementById('syncStatus');
             try {
@@ -310,7 +283,6 @@
                 if (response.ok) {
                     const resData = await response.json();
                     
-                    // 1. Gắn danh mục sản phẩm
                     masterData = resData.products || [];
                     const datalist = document.getElementById('productOptions');
                     datalist.innerHTML = "";
@@ -320,7 +292,6 @@
                         datalist.appendChild(option);
                     });
 
-                    // 2. Tự động đổ toàn bộ các khu vực nhân viên đã điền trước đó vào dropdown báo cáo cũ
                     const selectFilter = document.getElementById('filterZone');
                     selectFilter.innerHTML = '<option value="">-- Chọn khu vực cần xem --</option>';
                     
@@ -333,10 +304,7 @@
                             selectFilter.appendChild(opt);
                         });
                     } else {
-                        let opt = document.createElement('option');
-                        opt.value = "";
-                        opt.textContent = "(Chưa có khu vực nào lịch sử)";
-                        selectFilter.appendChild(opt);
+                        selectFilter.innerHTML = '<option value="">(Chưa có lịch sử khu vực)</option>';
                     }
 
                     statusEl.textContent = `✅ Đã kết nối hệ thống`;
@@ -360,8 +328,7 @@
                 document.getElementById('returnPolicyView').textContent = currentReturnPolicy;
                 alertBox.textContent = "📦 Khớp dữ liệu danh mục hệ thống!";
                 alertBox.className = "text-xs mt-1 min-h-[16px] font-medium text-emerald-600 dark:text-emerald-400";
-                playBeep('scan'); 
-                return;
+                playBeep('scan'); return;
             }
 
             let found = [...dateInventory].reverse().find(item => item.barcode === code && item.barcode !== "");
@@ -375,8 +342,7 @@
             } else {
                 alertBox.textContent = "🔍 Mã mới hoàn toàn (chưa có dữ liệu)";
                 alertBox.className = "text-xs mt-1 min-h-[16px] font-medium text-zinc-400 dark:text-zinc-500";
-                currentReturnPolicy = "-";
-                document.getElementById('returnPolicyView').textContent = "-";
+                currentReturnPolicy = "-"; document.getElementById('returnPolicyView').textContent = "-";
             }
         });
 
@@ -388,9 +354,7 @@
                 if (!document.getElementById('barcode').value.trim()) {
                     document.getElementById('barcode').value = matchedMaster.barcode;
                 }
-            } else {
-                currentReturnPolicy = "-";
-            }
+            } else { currentReturnPolicy = "-"; }
             document.getElementById('returnPolicyView').textContent = currentReturnPolicy;
         });
 
@@ -406,8 +370,7 @@
             html5QrcodeScanner.start({ facingMode: "environment" }, config, (decodedText) => {
                 let barcodeInput = document.getElementById('barcode');
                 barcodeInput.value = decodedText;
-                barcodeInput.dispatchEvent(new Event('input'));
-                stopCamera();
+                barcodeInput.dispatchEvent(new Event('input')); stopCamera();
             }, (err) => {}).catch(err => { alert("Yêu cầu bảo mật HTTPS để dùng Camera."); stopCamera(); });
         }
 
@@ -487,8 +450,7 @@
 
         function addItem() {
             if (isViewingOldReport) {
-                alert("Bạn đang ở chế độ xem báo cáo cũ. Hãy nhấn 'Trở Về' để quét tiếp ca hiện tại!");
-                return;
+                alert("Bạn đang ở chế độ xem báo cáo cũ. Hãy nhấn 'Trở Về' để quét tiếp ca hiện tại!"); return;
             }
 
             let employeeName = document.getElementById('employeeName').value.trim();
@@ -507,68 +469,53 @@
             let d = String(now.getDate()).padStart(2, '0');
             let m = String(now.getMonth() + 1).padStart(2, '0');
             let y = now.getFullYear();
-            let timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-            let timestamp = `${d}/${m}/${y} ${timeStr}`;
+            let timestamp = `${d}/${m}/${y} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
             let pullDate = calculatePullDate(expiryDate, pullType);
             let itemData = { barcode, name, quantity, expiryDate, pullType, pullDate, employeeName, locationZone, timestamp, returnPolicy: currentReturnPolicy };
             
-            dateInventory.push(itemData);
+            currentShiftData.push(itemData);
+            dateInventory = [...currentShiftData];
             applySort();
 
-            localStorage.setItem('date_inventory_return', JSON.stringify(dateInventory));
-            renderTable();
-            playBeep('success');
+            localStorage.setItem('date_inventory_return', JSON.stringify(currentShiftData));
+            renderTable(); playBeep('success');
 
-            document.getElementById('barcode').value = "";
-            document.getElementById('productName').value = "";
-            document.getElementById('quantity').value = "1";
-            document.getElementById('expiryDate').value = "";
+            document.getElementById('barcode').value = ""; document.getElementById('productName').value = "";
+            document.getElementById('quantity').value = "1"; document.getElementById('expiryDate').value = "";
             document.getElementById('memoryAlert').textContent = "";
-            currentReturnPolicy = "-";
-            document.getElementById('returnPolicyView').textContent = "-";
+            currentReturnPolicy = "-"; document.getElementById('returnPolicyView').textContent = "-";
         }
 
         function deleteItem(index) {
-            dateInventory.splice(index, 1);
-            localStorage.setItem('date_inventory_return', JSON.stringify(dateInventory));
+            currentShiftData.splice(index, 1);
+            dateInventory = [...currentShiftData];
+            localStorage.setItem('date_inventory_return', JSON.stringify(currentShiftData));
             renderTable();
         }
 
         function clearAllData() {
-            if (dateInventory.length === 0) {
-                alert("Bảng dữ liệu đã trống sẵn rồi!");
-                return;
-            }
-            if (confirm("⚠️ BẠN CÓ CHẮC CHẮN MUỐN XÓA TẤT CẢ DỮ LIỆU ĐÃ QUÉT?\nHành động này không thể hoàn tác nếu chưa gửi lên Sheet hoặc xuất Excel!")) {
-                dateInventory = [];
+            if (dateInventory.length === 0) { alert("Bảng dữ liệu đã trống sẵn rồi!"); return; }
+            if (confirm("⚠️ BẠN CÓ CHẮC CHẮN MUỐN XÓA TẤT CẢ DỮ LIỆU ĐÃ QUÉT?")) {
+                currentShiftData = []; dateInventory = [];
                 localStorage.removeItem('date_inventory_return');
-                renderTable();
-                playBeep('error');
-                alert("🧹 Đã xóa sạch dữ liệu tạm thời!");
+                renderTable(); playBeep('error');
             }
         }
 
         function toggleOldReportFilter() {
-            const filterDiv = document.getElementById('oldReportFilter');
-            filterDiv.classList.toggle('hidden');
+            document.getElementById('oldReportFilter').classList.toggle('hidden');
         }
 
+        // HÀM TẢI BÁO CÁO CŨ (Đã vá lỗi hiển thị)
         async function fetchOldReport() {
             let zone = document.getElementById('filterZone').value;
             let date = document.getElementById('filterDate').value;
 
-            if(!zone || !date) {
-                alert("Vui lòng chọn đầy đủ cả Khu Vực và Ngày cần xem báo cáo cũ!");
-                return;
-            }
+            if(!zone || !date) { alert("Vui lòng chọn đầy đủ cả Khu Vực và Ngày cần xem báo cáo cũ!"); return; }
 
             let dParts = date.split('-');
             let formattedFilterDate = `${dParts[2]}/${dParts[1]}/${dParts[0]}`;
-
-            if (!isViewingOldReport) {
-                backupCurrentShift = [...dateInventory];
-            }
 
             isViewingOldReport = true;
             document.getElementById('viewingModeBadge').textContent = `Chế độ: Báo cáo cũ [${zone} - ${formattedFilterDate}]`;
@@ -579,7 +526,7 @@
             document.getElementById('btnClearAll').classList.add('hidden');
             document.getElementById('thAction').classList.add('hidden');
 
-            document.getElementById('dateInventoryList').innerHTML = `<tr><td colspan="10" class="text-center py-6 text-blue-500 animate-pulse font-medium">⏳ Đang tải dữ liệu báo cáo cũ từ Google Sheets...</td></tr>`;
+            document.getElementById('dateInventoryList').innerHTML = `<tr><td colspan="10" class="text-center py-6 text-blue-500 animate-pulse font-medium">⏳ Đang tải dữ liệu báo cáo cũ...</td></tr>`;
 
             try {
                 const response = await fetch(SCRIPT_URL, {
@@ -587,37 +534,30 @@
                     mode: 'cors',
                     redirect: 'follow',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: "get_old_report",
-                        zone: zone,
-                        date: date 
-                    })
+                    body: JSON.stringify({ action: "get_old_report", zone: zone, date: date })
                 });
 
                 if (response.ok) {
                     const result = await response.json();
                     if(result.status === "success" && result.data) {
-                        dateInventory = result.data; 
+                        dateInventory = result.data; // Nạp dữ liệu báo cáo cũ vào bảng hiển thị công khai
                         renderTable();
                         if(dateInventory.length === 0) {
-                            document.getElementById('emptyAlert').textContent = "Không tìm thấy dữ liệu kiểm date trùng khớp cho ngày và khu vực này.";
+                            document.getElementById('emptyAlert').textContent = "Không tìm thấy dữ liệu kiểm date phù hợp.";
                             document.getElementById('emptyAlert').classList.remove('hidden');
                         }
                     } else {
-                        alert("Không tìm thấy dữ liệu hoặc cấu hình Apps Script phản hồi lỗi: " + result.message);
-                        resetToCurrentShift();
+                        alert("Hệ thống báo lỗi: " + result.message); resetToCurrentShift();
                     }
                 }
             } catch (err) {
-                console.error(err);
-                alert("❌ Lỗi kết nối!");
-                resetToCurrentShift();
+                alert("❌ Lỗi kết nối máy chủ!"); resetToCurrentShift();
             }
         }
 
         function resetToCurrentShift() {
             isViewingOldReport = false;
-            dateInventory = [...backupCurrentShift];
+            dateInventory = [...currentShiftData]; // Trả lại dữ liệu ca hiện tại từ bộ nhớ tạm
             
             document.getElementById('viewingModeBadge').textContent = `Chế độ: Ca hiện tại`;
             document.getElementById('viewingModeBadge').className = "no-print text-xs bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400 px-2 py-0.5 rounded-md font-medium";
@@ -633,16 +573,11 @@
         }
 
         async function submitDataToSheet() {
-            if (dateInventory.length === 0) {
-                alert("Không có dữ liệu nào trong bảng tạm để gửi!");
-                return;
-            }
-
+            if (currentShiftData.length === 0) { alert("Không có dữ liệu ca trực để gửi!"); return; }
             const btn = document.getElementById('btnSubmitSheet');
-            if (!confirm(`Bạn muốn đồng bộ toàn bộ ${dateInventory.length} dòng dữ liệu này lên hệ thống và chốt ca chứ?`)) return;
+            if (!confirm(`Bạn muốn đồng bộ toàn bộ ${currentShiftData.length} dòng dữ liệu?`)) return;
 
-            btn.disabled = true;
-            btn.innerHTML = "⏳ Đang gửi dữ liệu...";
+            btn.disabled = true; btn.innerHTML = "⏳ Đang gửi...";
             btn.classList.add('opacity-50', 'cursor-not-allowed');
 
             try {
@@ -651,37 +586,25 @@
                     mode: 'cors',
                     redirect: 'follow',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-                    body: JSON.stringify({ action: "sync_batch", data: dateInventory })
+                    body: JSON.stringify({ action: "sync_batch", data: currentShiftData })
                 });
 
-                const resText = await response.text();
-                const resJson = JSON.parse(resText);
-
+                const resJson = await response.json();
                 if (resJson.status === "success") {
-                    alert(`🚀 Đồng bộ thành công! Thao tác chốt ca hoàn tất.`);
-                    dateInventory = [];
+                    alert(`🚀 Đồng bộ chốt ca thành công!`);
+                    currentShiftData = []; dateInventory = [];
                     localStorage.removeItem('date_inventory_return');
-                    renderTable();
-                    playBeep('success');
-                    // Tải lại dữ liệu hệ thống để cập nhật danh mục dropdown khu vực mới lập tức
-                    fetchSystemData();
-                } else {
-                    alert("❌ Lỗi từ hệ thống Sheet: " + resJson.message);
-                }
-
-            } catch (err) {
-                console.error(err);
-                alert("❌ Lỗi kết nối!");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = "🚀 Gửi & Chốt Ca";
+                    renderTable(); playBeep('success'); fetchSystemData();
+                } else { alert("❌ Lỗi Sheet: " + resJson.message); }
+            } catch (err) { alert("❌ Lỗi kết nối mạng!"); } 
+            finally {
+                btn.disabled = false; btn.innerHTML = "🚀 Gửi & Chốt Ca";
                 btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
 
         async function exportToExcel() {
             if(dateInventory.length === 0) { alert("Không có dữ liệu để xuất file!"); return; }
-
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet("Bao_Cao_Date");
 
@@ -705,16 +628,9 @@
                     formattedExp = `${expParts[2]}/${expParts[1]}/${expParts[0]}`;
                 }
                 worksheet.addRow({
-                    barcode: item.barcode || "---",
-                    name: item.name,
-                    quantity: item.quantity,
-                    expiryDate: formattedExp,
-                    pullType: item.pullType,
-                    pullDate: item.pullDate,
-                    timestamp: item.timestamp,
-                    returnPolicy: item.returnPolicy || "-",
-                    locationZone: item.locationZone || "---",
-                    employeeName: item.employeeName
+                    barcode: item.barcode || "---", name: item.name, quantity: item.quantity, expiryDate: formattedExp,
+                    pullType: item.pullType, pullDate: item.pullDate, timestamp: item.timestamp,
+                    returnPolicy: item.returnPolicy || "-", locationZone: item.locationZone || "---", employeeName: item.employeeName
                 });
             });
 
@@ -728,48 +644,28 @@
             });
 
             worksheet.eachRow((row, rowNumber) => {
-                if (rowNumber === 1) return;
-                row.height = 24;
-
+                if (rowNumber === 1) return; row.height = 24;
                 row.eachCell((cell) => {
-                    cell.font = { name: 'Segoe UI', size: 10 };
-                    cell.alignment = { vertical: 'middle' };
-                    cell.border = {
-                        bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
-                        right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
-                    };
+                    cell.font = { name: 'Segoe UI', size: 10 }; cell.alignment = { vertical: 'middle' };
+                    cell.border = { bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } }, right: { style: 'thin', color: { argb: 'FFE2E8F0' } } };
                 });
-
-                row.getCell('barcode').alignment = { vertical: 'middle', horizontal: 'center' };
-                row.getCell('quantity').alignment = { vertical: 'middle', horizontal: 'center' };
-                row.getCell('expiryDate').alignment = { vertical: 'middle', horizontal: 'center' };
-                row.getCell('pullType').alignment = { vertical: 'middle', horizontal: 'center' };
-                row.getCell('pullDate').alignment = { vertical: 'middle', horizontal: 'center' };
-                row.getCell('timestamp').alignment = { vertical: 'middle', horizontal: 'center' };
-                row.getCell('returnPolicy').alignment = { vertical: 'middle', horizontal: 'center' };
-                row.getCell('locationZone').alignment = { vertical: 'middle', horizontal: 'center' };
-                row.getCell('employeeName').alignment = { vertical: 'middle', horizontal: 'center' };
-
+                ['barcode','quantity','expiryDate','pullType','pullDate','timestamp','returnPolicy','locationZone','employeeName'].forEach(k => {
+                    row.getCell(k).alignment = { vertical: 'middle', horizontal: 'center' };
+                });
                 row.getCell('quantity').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF4F4F5' } };
-                
                 row.getCell('pullType').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };
                 row.getCell('pullType').font = { name: 'Segoe UI', bold: true, color: { argb: 'FF00843D' } };
-
                 row.getCell('pullDate').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFE4E1' } }; 
                 row.getCell('pullDate').font = { name: 'Segoe UI', bold: true, color: { argb: 'FFD62219' } };
-
                 row.getCell('returnPolicy').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFCCFBF1' } };
                 row.getCell('returnPolicy').font = { name: 'Segoe UI', bold: true, color: { argb: 'FF0F766E' } };
             });
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            let filePrefix = isViewingOldReport ? "Bao_Cao_Date_Cu_" : "Bao_Cao_Date_7Eleven_";
-            link.download = `${filePrefix}${new Date().toISOString().slice(0,10)}.xlsx`;
-            link.click();
-            URL.revokeObjectURL(link.href);
+            const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
+            link.download = `${isViewingOldReport ? 'Bao_Cao_Date_Cu_' : 'Bao_Cao_Date_7Eleven_'}${new Date().toISOString().slice(0,10)}.xlsx`;
+            link.click(); URL.revokeObjectURL(link.href);
         }
 
         renderTable();
