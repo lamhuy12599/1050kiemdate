@@ -33,8 +33,16 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
+        /* Hiệu ứng nền Radial Gradient từ tâm */
+        .liquid-bg {
+            background: radial-gradient(circle at center, #e6f4ea 0%, #fefde8 100%);
+        }
+        .dark .liquid-bg {
+            background: radial-gradient(circle at center, #022c16 0%, #111827 100%);
+        }
+
         @media print {
-            .no-print, #camera-container, button, #themeToggleBtn, .bg-zinc-900, #oldReportFilter {
+            .no-print, #camera-container, button, #themeToggleBtn, .bg-white\/70 {
                 display: none !important;
             }
             body {
@@ -64,79 +72,79 @@
         }
     </style>
 </head>
-<body class="bg-zinc-100 dark:bg-zinc-900 min-h-screen p-4 md:p-8 text-zinc-800 dark:text-zinc-100 transition-colors duration-300">
+<body class="liquid-bg min-h-screen p-4 md:p-8 text-zinc-800 dark:text-zinc-100 transition-colors duration-300 antialiased">
 
     <div class="max-w-7xl mx-auto">
-        <div class="no-print bg-zinc-900 dark:bg-zinc-950 text-white p-5 rounded-2xl shadow-md mb-6 border-b-4 border-sevOrange-500 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="no-print bg-white/70 dark:bg-zinc-900/60 backdrop-blur-xl p-5 rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.06)] mb-6 border border-white/40 dark:border-zinc-800/50 border-b-4 border-b-sevOrange-500 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all">
             <div class="flex items-center gap-4">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/7-eleven_logo.svg/960px-7-eleven_logo.svg.png" alt="Logo" class="w-14 h-14 rounded-2xl object-cover bg-white p-0.5 shadow-inner shrink-0">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/7-eleven_logo.svg/960px-7-eleven_logo.svg.png" alt="Logo" class="w-14 h-14 rounded-2xl object-cover bg-white p-0.5 shadow-md shrink-0">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-wide text-white">1050-MilleniumQ4 <span class="text-sevOrange-500">|</span> <span class="text-emerald-400">WEBAPP KIỂM DATE NỘI BỘ</span></h1>
-                    <p class="text-zinc-400 text-sm mt-0.5">Thực hiện bởi Lâm Huy</p>
+                    <h1 class="text-2xl font-extrabold tracking-wide text-zinc-800 dark:text-white">1050-MilleniumQ4 <span class="text-sevOrange-500">|</span> <span class="text-sevGreen-600 dark:text-emerald-400">WEBAPP KIỂM DATE NỘI BỘ</span></h1>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-sm font-medium mt-0.5">Thực hiện bởi Lâm Huy</p>
                 </div>
             </div>
-            <button onclick="toggleTheme()" id="themeToggleBtn" class="bg-zinc-800 hover:bg-zinc-700 text-emerald-400 dark:text-emerald-300 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-sm shrink-0 self-end sm:self-auto">
+            <button onclick="toggleTheme()" id="themeToggleBtn" class="bg-white/80 dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-zinc-700 dark:text-emerald-300 border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 shadow-sm shrink-0 self-end sm:self-auto">
                 🌙 Chế độ tối
             </button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-full-width">
             
-            <div class="no-print bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700 h-fit transition-colors duration-300">
-                <div class="flex items-center justify-between mb-4 border-b dark:border-zinc-700 pb-2">
-                    <h2 class="text-lg font-semibold text-zinc-800 dark:text-white">Thông Tin Kiểm Date</h2>
-                    <span id="syncStatus" class="text-xs bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 px-2 py-0.5 rounded-full font-medium animate-pulse">⏳ Đang tải Hệ thống...</span>
+            <div class="no-print bg-white/60 dark:bg-zinc-900/50 backdrop-blur-xl p-6 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.06)] border border-white/50 dark:border-zinc-800/50 h-fit transition-all">
+                <div class="flex items-center justify-between mb-4 border-b border-zinc-200/60 dark:border-zinc-700/50 pb-2">
+                    <h2 class="text-lg font-bold text-zinc-800 dark:text-white">Thông Tin Kiểm Date</h2>
+                    <span id="syncStatus" class="text-xs bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 px-2.5 py-1 rounded-full font-semibold animate-pulse">⏳ Đang tải Hệ thống...</span>
                 </div>
                 
                 <div class="space-y-4">
-                    <div class="bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700 space-y-3">
+                    <div class="bg-white/40 dark:bg-zinc-950/40 p-3 rounded-2xl border border-white/60 dark:border-zinc-800/60 space-y-3">
                         <div>
-                            <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">👤 Tên Nhân Viên Kiểm Date</label>
-                            <input type="text" id="employeeName" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white dark:bg-zinc-700 dark:text-white" placeholder="Nhập tên của bạn...">
+                            <label class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-1">👤 Tên Nhân Viên Kiểm Date</label>
+                            <input type="text" id="employeeName" class="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white/80 dark:bg-zinc-800 dark:text-white transition shadow-inner" placeholder="Nhập tên của bạn...">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1">📍 Khu Vực Kiểm Date</label>
-                            <input type="text" id="locationZone" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white dark:bg-zinc-700 dark:text-white" placeholder="Nhập tự do (Ví dụ: Kệ bánh mì, Đảo 1...)">
+                            <label class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-1">📍 Khu Vực Kiểm Date</label>
+                            <input type="text" id="locationZone" class="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white/80 dark:bg-zinc-800 dark:text-white transition shadow-inner" placeholder="Nhập tự do (Ví dụ: Kệ bánh mì, Đảo 1...)">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">Mã Barcode</label>
+                        <label class="block text-sm font-semibold text-zinc-600 dark:text-zinc-300 mb-1">Mã Barcode</label>
                         <div class="flex gap-2">
-                            <input type="text" id="barcode" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-mono bg-white dark:bg-zinc-700 dark:text-white" placeholder="Nhập hoặc quét mã...">
-                            <button onclick="toggleCamera()" class="bg-zinc-800 dark:bg-zinc-950 text-white px-3 py-2 rounded-xl text-xs font-medium hover:bg-zinc-700 transition">📷 Camera</button>
+                            <input type="text" id="barcode" class="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-mono bg-white/80 dark:bg-zinc-800 dark:text-white transition shadow-inner" placeholder="Nhập hoặc quét mã...">
+                            <button onclick="toggleCamera()" class="bg-zinc-800 dark:bg-zinc-950 text-white px-3 py-2 rounded-xl text-xs font-bold hover:bg-zinc-700 transition shadow-md">📷 Camera</button>
                         </div>
-                        <div id="camera-container" class="hidden border-2 border-dashed border-zinc-400 dark:border-zinc-600 rounded-xl p-2 bg-zinc-50 dark:bg-zinc-900 mt-2">
+                        <div id="camera-container" class="hidden border-2 border-dashed border-zinc-300 dark:border-zinc-600 rounded-2xl p-2 bg-white/50 dark:bg-zinc-950 mt-2">
                             <div id="reader" class="w-full rounded-xl overflow-hidden"></div>
-                            <button onclick="stopCamera()" class="w-full mt-2 bg-rose-500 text-white text-xs py-1.5 rounded-xl">Tắt Camera</button>
+                            <button onclick="stopCamera()" class="w-full mt-2 bg-rose-500 text-white text-xs py-1.5 rounded-xl font-bold">Tắt Camera</button>
                         </div>
-                        <p id="memoryAlert" class="text-xs mt-1 min-h-[16px] font-medium text-zinc-400 dark:text-zinc-400"></p>
+                        <p id="memoryAlert" class="text-xs mt-1 min-h-[16px] font-semibold text-zinc-400 dark:text-zinc-400"></p>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">Tên Sản Phẩm</label>
-                        <input type="text" id="productName" list="productOptions" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-emerald-50/20 dark:bg-zinc-700 dark:text-white" placeholder="Chọn hoặc nhập tên sản phẩm...">
+                        <label class="block text-sm font-semibold text-zinc-600 dark:text-zinc-300 mb-1">Tên Sản Phẩm</label>
+                        <input type="text" id="productName" list="productOptions" class="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-medium bg-white/80 dark:bg-zinc-800 dark:text-white transition shadow-inner" placeholder="Chọn hoặc nhập tên sản phẩm...">
                         <datalist id="productOptions"></datalist>
                         
-                        <div class="text-xs font-medium text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900 p-2 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 mt-1.5 flex justify-between items-center">
+                        <div class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 bg-white/30 dark:bg-zinc-950/30 p-2 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 mt-1.5 flex justify-between items-center">
                             <span>🔄 Chính sách Đổi trả NCC:</span>
-                            <span id="returnPolicyView" class="font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 px-2 py-0.5 rounded-md border border-teal-200 dark:border-teal-900">-</span>
+                            <span id="returnPolicyView" class="font-bold text-teal-700 dark:text-teal-400 bg-teal-50/60 dark:bg-teal-950/40 px-2 py-0.5 rounded-md border border-teal-200/50 dark:border-teal-900">-</span>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">Số Lượng Sản Phẩm</label>
-                        <input type="number" id="quantity" min="1" value="1" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-bold text-zinc-700 dark:text-white bg-white dark:bg-zinc-700">
+                        <label class="block text-sm font-semibold text-zinc-600 dark:text-zinc-300 mb-1">Số Lượng Sản Phẩm</label>
+                        <input type="number" id="quantity" min="1" value="1" class="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-bold text-zinc-700 dark:text-white bg-white/80 dark:bg-zinc-800 transition shadow-inner">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">Ngày hết hạn (Expiry Date)</label>
-                        <input type="date" id="expiryDate" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-bold text-zinc-700 dark:text-white bg-white dark:bg-zinc-700">
+                        <label class="block text-sm font-semibold text-zinc-600 dark:text-zinc-300 mb-1">Ngày hết hạn (Expiry Date)</label>
+                        <input type="date" id="expiryDate" class="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 font-bold text-zinc-700 dark:text-white bg-white/80 dark:bg-zinc-800 transition shadow-inner">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">Quy định rút hàng</label>
-                        <select id="pullType" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 bg-emerald-50/40 dark:bg-zinc-700 font-bold text-sevGreen-700 dark:text-emerald-400">
+                        <label class="block text-sm font-semibold text-zinc-600 dark:text-zinc-300 mb-1">Quy định rút hàng</label>
+                        <select id="pullType" class="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sevGreen-600 bg-white/80 dark:bg-zinc-800 font-bold text-sevGreen-700 dark:text-emerald-400 transition shadow-inner">
                             <option value="H-2">H-2 (Rút trước khi hết date 2 giờ)</option>
                             <option value="D-1">D-1 (Rút trước khi hết date 1 ngày)</option>
                             <option value="D-3">D-3 (Rút trước khi hết date 3 ngày)</option>
@@ -145,28 +153,24 @@
                         </select>
                     </div>
 
-                    <button onclick="addItem()" class="w-full bg-sevOrange-500 text-white font-bold py-2.5 rounded-xl text-sm hover:bg-sevOrange-600 transition shadow-sm mt-2 tracking-wide">Ghi Nhận Kiểm Date (Tạm Tính)</button>
+                    <button onclick="addItem()" class="w-full bg-sevOrange-500 text-white font-bold py-2.5 rounded-xl text-sm hover:bg-sevOrange-600 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md mt-2 tracking-wide">Ghi Nhận Kiểm Date (Tạm Tính)</button>
                 </div>
             </div>
 
-            <div class="lg:col-span-2 bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700 transition-colors duration-300 print-table-container">
+            <div class="lg:col-span-2 bg-white/60 dark:bg-zinc-900/50 backdrop-blur-xl p-6 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.06)] border border-white/50 dark:border-zinc-800/50 transition-all print-table-container">
                 <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
                     <div>
-                        <h2 id="tableTitle" class="text-lg font-semibold text-zinc-800 dark:text-white print:text-xl print:font-bold">Danh Sách Báo Cáo Date Trong Ca</h2>
-                        <span id="viewingModeBadge" class="no-print text-xs bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400 px-2 py-0.5 rounded-md font-medium">Chế độ: Ca hiện tại</span>
+                        <h2 id="tableTitle" class="text-lg font-bold text-zinc-800 dark:text-white print:text-xl print:font-bold">Danh Sách Báo Cáo Date Trong Ca</h2>
                     </div>
                     
                     <div class="no-print flex flex-wrap gap-2">
-                        <button onclick="toggleOldReportFilter()" class="bg-amber-500 text-white font-semibold px-3 py-2 rounded-xl text-sm hover:bg-amber-600 transition shadow-sm">
-                            🔍 Xem Báo Cáo Cũ
-                        </button>
-                        <button onclick="window.print()" class="bg-zinc-600 text-white font-medium px-3 py-2 rounded-xl text-sm hover:bg-zinc-700 transition shadow-sm flex items-center gap-1">
+                        <button onclick="window.print()" class="bg-white/80 dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 text-zinc-700 dark:text-white font-semibold px-3 py-2 rounded-xl text-sm hover:bg-zinc-100 dark:hover:bg-zinc-600 transition shadow-sm flex items-center gap-1">
                             🖨️ In
                         </button>
-                        <button onclick="exportToExcel()" class="bg-emerald-600 text-white font-medium px-3 py-2 rounded-xl text-sm hover:bg-emerald-700 transition shadow-sm">
+                        <button onclick="exportToExcel()" class="bg-emerald-600 text-white font-semibold px-3 py-2 rounded-xl text-sm hover:bg-emerald-700 transition shadow-sm">
                             📦 Excel
                         </button>
-                        <button onclick="clearAllData()" id="btnClearAll" class="bg-rose-500 text-white font-medium px-3 py-2 rounded-xl text-sm hover:bg-rose-600 transition shadow-sm">
+                        <button onclick="clearAllData()" id="btnClearAll" class="bg-rose-500 text-white font-semibold px-3 py-2 rounded-xl text-sm hover:bg-rose-600 transition shadow-sm">
                             🗑️ Xóa Tất Cả
                         </button>
                         <button onclick="submitDataToSheet()" id="btnSubmitSheet" class="bg-sevGreen-600 text-white font-bold px-4 py-2 rounded-xl text-sm hover:bg-sevGreen-700 transition shadow-md flex items-center gap-1">
@@ -175,56 +179,38 @@
                     </div>
                 </div>
 
-                <div id="oldReportFilter" class="hidden no-print bg-zinc-50 dark:bg-zinc-900 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
-                    <div>
-                        <label class="block text-xs font-semibold text-zinc-500 uppercase mb-1">Khu Vực Cần Xem</label>
-                        <select id="filterZone" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-1.5 text-sm bg-white dark:bg-zinc-700 text-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
-                            <option value="">-- Đang nạp danh sách khu vực... --</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-zinc-500 uppercase mb-1">Ngày Kiểm Cũ</label>
-                        <input type="date" id="filterDate" class="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-3 py-1.5 text-sm bg-white dark:bg-zinc-700 text-zinc-800 dark:text-white">
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="fetchOldReport()" class="flex-1 bg-blue-600 text-white text-sm font-bold py-1.5 rounded-xl hover:bg-blue-700 transition">Tải Báo Cáo</button>
-                        <button onclick="resetToCurrentShift()" class="bg-zinc-400 text-white text-sm font-medium px-3 py-1.5 rounded-xl hover:bg-zinc-500 transition">Trở Về</button>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700">
-                    <table class="w-full text-left text-sm border-collapse">
+                <div class="overflow-x-auto rounded-2xl border border-zinc-200/60 dark:border-zinc-700/50 shadow-inner">
+                    <table class="w-full text-left text-sm border-collapse bg-white/30 dark:bg-transparent">
                         <thead>
-                            <tr class="bg-sevGreen-600 dark:bg-sevGreen-950 border-b border-sevGreen-700 text-white font-medium">
+                            <tr class="bg-sevGreen-600 dark:bg-sevGreen-950 border-b border-sevGreen-700 text-white font-bold">
                                 <th class="p-3">Barcode</th>
                                 <th class="p-3">Tên Sản Phẩm</th>
-                                <th class="p-3 text-center bg-sevGreen-700 dark:bg-zinc-900">SL</th>
+                                <th class="p-3 text-center bg-sevGreen-700 dark:bg-zinc-900/60">SL</th>
                                 <th class="p-3">Ngày Hết Hạn</th>
-                                <th class="p-3 text-center bg-emerald-900 dark:bg-emerald-950">Mã Rút</th>
+                                <th class="p-3 text-center bg-emerald-900 dark:bg-emerald-950/80">Mã Rút</th>
                                 <th onclick="toggleSortPullDate()" class="p-3 text-center bg-sevOrange-500 text-white font-bold cursor-pointer select-none hover:bg-sevOrange-600 transition shadow-inner">
                                     Ngày Phải Rút <span id="sortIcon" class="text-xs ml-0.5">↕</span>
                                 </th>
                                 <th class="p-3 bg-zinc-800 dark:bg-zinc-950 text-center">Ngày Giờ Quét</th>
                                 <th class="p-3 bg-teal-800 dark:bg-teal-950 text-center">Đổi Trả NCC</th>
-                                <th class="p-3 bg-zinc-700 dark:bg-zinc-900 text-center">Khu Vực / NV</th>
+                                <th class="p-3 bg-zinc-700 dark:bg-zinc-900 text-center">Khu Vực</th>
+                                <th class="p-3 bg-zinc-600 dark:bg-zinc-800 text-center">Nhân Viên</th>
                                 <th class="p-3 text-center no-print" id="thAction">Xóa</th>
                             </tr>
                         </thead>
                         <tbody id="dateInventoryList"></tbody>
                     </table>
                 </div>
-                <div id="emptyAlert" class="text-center py-8 text-zinc-400 dark:text-zinc-500 text-sm">Chưa có dữ liệu kiểm date nào được nhập.</div>
+                <div id="emptyAlert" class="text-center py-8 text-zinc-400 dark:text-zinc-500 font-medium text-sm">Chưa có dữ liệu kiểm date nào được nhập.</div>
             </div>
         </div>
     </div>
 
     <script>
-        // CHÚ Ý: Bạn bắt buộc phải dán URL mới sau khi Deploy Code.gs vào đây!
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzaeC1CeX2rKopOdgohkEQxknpz97kxHH5i9jz63hQ3JQZA5rLekspyGzZcic6PxHjoAQ/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-zIRv2YTc03PG8HlhBwO7RaYze76VKOVKekONpfftLZ6XWkkTMJ20uruekyghSE9zzg/exec";
 
         let currentShiftData = JSON.parse(localStorage.getItem('date_inventory_return')) || [];
         let dateInventory = [...currentShiftData]; 
-        let isViewingOldReport = false; 
 
         let masterData = []; 
         let html5QrcodeScanner = null;
@@ -292,27 +278,12 @@
                         datalist.appendChild(option);
                     });
 
-                    const selectFilter = document.getElementById('filterZone');
-                    selectFilter.innerHTML = '<option value="">-- Chọn khu vực cần xem --</option>';
-                    
-                    let checkedZones = resData.zones || [];
-                    if(checkedZones.length > 0) {
-                        checkedZones.forEach(zone => {
-                            let opt = document.createElement('option');
-                            opt.value = zone;
-                            opt.textContent = zone;
-                            selectFilter.appendChild(opt);
-                        });
-                    } else {
-                        selectFilter.innerHTML = '<option value="">(Chưa có lịch sử khu vực)</option>';
-                    }
-
                     statusEl.textContent = `✅ Đã kết nối hệ thống`;
-                    statusEl.className = "text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 px-2 py-0.5 rounded-full font-medium";
+                    statusEl.className = "text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 px-2.5 py-1 rounded-full font-bold shadow-sm";
                 }
             } catch (err) {
                 statusEl.textContent = "❌ Lỗi kết nối hệ thống";
-                statusEl.className = "text-xs bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 px-2 py-0.5 rounded-full font-medium";
+                statusEl.className = "text-xs bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 px-2.5 py-1 rounded-full font-bold shadow-sm";
             }
         }
 
@@ -327,7 +298,7 @@
                 currentReturnPolicy = matchedMaster.returnPolicy || "-";
                 document.getElementById('returnPolicyView').textContent = currentReturnPolicy;
                 alertBox.textContent = "📦 Khớp dữ liệu danh mục hệ thống!";
-                alertBox.className = "text-xs mt-1 min-h-[16px] font-medium text-emerald-600 dark:text-emerald-400";
+                alertBox.className = "text-xs mt-1 min-h-[16px] font-bold text-emerald-600 dark:text-emerald-400";
                 playBeep('scan'); return;
             }
 
@@ -337,11 +308,11 @@
                 currentReturnPolicy = found.returnPolicy || "-";
                 document.getElementById('returnPolicyView').textContent = currentReturnPolicy;
                 alertBox.textContent = "⚡ Tự động lấy tên từ lịch sử ca trực!";
-                alertBox.className = "text-xs mt-1 min-h-[16px] font-medium text-teal-600 dark:text-teal-400";
+                alertBox.className = "text-xs mt-1 min-h-[16px] font-bold text-teal-600 dark:text-teal-400";
                 playBeep('scan');
             } else {
                 alertBox.textContent = "🔍 Mã mới hoàn toàn (chưa có dữ liệu)";
-                alertBox.className = "text-xs mt-1 min-h-[16px] font-medium text-zinc-400 dark:text-zinc-500";
+                alertBox.className = "text-xs mt-1 min-h-[16px] font-bold text-zinc-400 dark:text-zinc-500";
                 currentReturnPolicy = "-"; document.getElementById('returnPolicyView').textContent = "-";
             }
         });
@@ -423,36 +394,31 @@
 
             dateInventory.forEach((item, index) => {
                 let formattedExp = item.expiryDate;
-                if(item.expiryDate.includes('-')) {
+                if(item.expiryDate && item.expiryDate.includes('-')) {
                     let expParts = item.expiryDate.split('-');
                     formattedExp = `${expParts[2]}/${expParts[1]}/${expParts[0]}`;
                 }
 
-                let locationAndStaff = item.locationZone ? `<b>[${item.locationZone}]</b><br>${item.employeeName}` : item.employeeName;
-
                 tbody.innerHTML += `
-                    <tr class="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700/40 transition">
+                    <tr class="border-b border-zinc-200/60 dark:border-zinc-700/50 hover:bg-white/40 dark:hover:bg-zinc-800/40 transition">
                         <td class="p-3 font-mono text-xs text-zinc-500 dark:text-zinc-400">${item.barcode || '---'}</td>
-                        <td class="p-3 font-medium text-zinc-800 dark:text-zinc-200">${item.name}</td>
-                        <td class="p-3 text-center font-bold text-zinc-700 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900/40 print:bg-white">${item.quantity}</td>
-                        <td class="p-3 font-medium text-zinc-600 dark:text-zinc-300">${formattedExp}</td>
-                        <td class="p-3 text-center font-bold text-sevGreen-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-zinc-900 print:bg-white">${item.pullType}</td>
-                        <td class="p-3 text-center font-bold text-sevOrange-600 dark:text-sevOrange-500 bg-orange-50/60 dark:bg-orange-950/20 print:bg-white">${item.pullDate}</td>
-                        <td class="p-3 text-center font-mono text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50/50 dark:bg-zinc-900 print:bg-white">${item.timestamp}</td>
-                        <td class="p-3 text-center font-semibold text-teal-800 dark:text-teal-400 bg-teal-50/20 dark:bg-teal-950/20 print:bg-white">${item.returnPolicy || '-'}</td>
-                        <td class="p-3 text-center text-xs text-zinc-700 dark:text-zinc-300">${locationAndStaff}</td>
-                        <td class="p-3 text-center no-print ${isViewingOldReport ? 'hidden' : ''}">
-                            <button onclick="deleteItem(${index})" class="text-rose-500 hover:text-rose-700 font-bold">✕</button>
+                        <td class="p-3 font-semibold text-zinc-800 dark:text-zinc-200">${item.name}</td>
+                        <td class="p-3 text-center font-bold text-zinc-700 dark:text-zinc-300 bg-white/20 dark:bg-zinc-900/40 print:bg-white">${item.quantity}</td>
+                        <td class="p-3 font-semibold text-zinc-600 dark:text-zinc-300">${formattedExp}</td>
+                        <td class="p-3 text-center font-bold text-sevGreen-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-zinc-900 print:bg-white">${item.pullType}</td>
+                        <td class="p-3 text-center font-bold text-sevOrange-600 dark:text-sevOrange-500 bg-orange-50/40 dark:bg-orange-950/20 print:bg-white">${item.pullDate}</td>
+                        <td class="p-3 text-center font-mono text-xs text-zinc-600 dark:text-zinc-400 bg-white/20 dark:bg-zinc-900 print:bg-white">${item.timestamp}</td>
+                        <td class="p-3 text-center font-bold text-teal-800 dark:text-teal-400 bg-teal-50/20 dark:bg-teal-950/20 print:bg-white">${item.returnPolicy || '-'}</td>
+                        <td class="p-3 text-center font-semibold text-zinc-700 dark:text-zinc-300">${item.locationZone || '---'}</td>
+                        <td class="p-3 text-center text-xs font-medium text-zinc-700 dark:text-zinc-300">${item.employeeName}</td>
+                        <td class="p-3 text-center no-print">
+                            <button onclick="deleteItem(${index})" class="text-rose-500 hover:text-rose-700 font-extrabold hover:scale-110 transition-transform">✕</button>
                         </td>
                     </tr>`;
             });
         }
 
         function addItem() {
-            if (isViewingOldReport) {
-                alert("Bạn đang ở chế độ xem báo cáo cũ. Hãy nhấn 'Trở Về' để quét tiếp ca hiện tại!"); return;
-            }
-
             let employeeName = document.getElementById('employeeName').value.trim();
             let locationZone = document.getElementById('locationZone').value.trim();
             let barcode = document.getElementById('barcode').value.trim();
@@ -501,75 +467,6 @@
                 localStorage.removeItem('date_inventory_return');
                 renderTable(); playBeep('error');
             }
-        }
-
-        function toggleOldReportFilter() {
-            document.getElementById('oldReportFilter').classList.toggle('hidden');
-        }
-
-        // HÀM TẢI BÁO CÁO CŨ (Đã vá lỗi hiển thị)
-        async function fetchOldReport() {
-            let zone = document.getElementById('filterZone').value;
-            let date = document.getElementById('filterDate').value;
-
-            if(!zone || !date) { alert("Vui lòng chọn đầy đủ cả Khu Vực và Ngày cần xem báo cáo cũ!"); return; }
-
-            let dParts = date.split('-');
-            let formattedFilterDate = `${dParts[2]}/${dParts[1]}/${dParts[0]}`;
-
-            isViewingOldReport = true;
-            document.getElementById('viewingModeBadge').textContent = `Chế độ: Báo cáo cũ [${zone} - ${formattedFilterDate}]`;
-            document.getElementById('viewingModeBadge').className = "no-print text-xs bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 px-2 py-0.5 rounded-md font-medium";
-            document.getElementById('tableTitle').textContent = "Danh Sách Báo Cáo Cũ Đã Truy Xuất";
-            
-            document.getElementById('btnSubmitSheet').classList.add('hidden');
-            document.getElementById('btnClearAll').classList.add('hidden');
-            document.getElementById('thAction').classList.add('hidden');
-
-            document.getElementById('dateInventoryList').innerHTML = `<tr><td colspan="10" class="text-center py-6 text-blue-500 animate-pulse font-medium">⏳ Đang tải dữ liệu báo cáo cũ...</td></tr>`;
-
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'cors',
-                    redirect: 'follow',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: "get_old_report", zone: zone, date: date })
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    if(result.status === "success" && result.data) {
-                        dateInventory = result.data; // Nạp dữ liệu báo cáo cũ vào bảng hiển thị công khai
-                        renderTable();
-                        if(dateInventory.length === 0) {
-                            document.getElementById('emptyAlert').textContent = "Không tìm thấy dữ liệu kiểm date phù hợp.";
-                            document.getElementById('emptyAlert').classList.remove('hidden');
-                        }
-                    } else {
-                        alert("Hệ thống báo lỗi: " + result.message); resetToCurrentShift();
-                    }
-                }
-            } catch (err) {
-                alert("❌ Lỗi kết nối máy chủ!"); resetToCurrentShift();
-            }
-        }
-
-        function resetToCurrentShift() {
-            isViewingOldReport = false;
-            dateInventory = [...currentShiftData]; // Trả lại dữ liệu ca hiện tại từ bộ nhớ tạm
-            
-            document.getElementById('viewingModeBadge').textContent = `Chế độ: Ca hiện tại`;
-            document.getElementById('viewingModeBadge').className = "no-print text-xs bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400 px-2 py-0.5 rounded-md font-medium";
-            document.getElementById('tableTitle').textContent = "Danh Sách Báo Cáo Date Trong Ca";
-            
-            document.getElementById('btnSubmitSheet').classList.remove('hidden');
-            document.getElementById('btnClearAll').classList.remove('hidden');
-            document.getElementById('thAction').classList.remove('hidden');
-            document.getElementById('oldReportFilter').classList.add('hidden');
-            document.getElementById('emptyAlert').textContent = "Chưa có dữ liệu kiểm date nào được nhập.";
-
-            renderTable();
         }
 
         async function submitDataToSheet() {
@@ -623,7 +520,7 @@
 
             dateInventory.forEach(item => {
                 let formattedExp = item.expiryDate;
-                if(item.expiryDate.includes('-')) {
+                if(item.expiryDate && item.expiryDate.includes('-')) {
                     let expParts = item.expiryDate.split('-');
                     formattedExp = `${expParts[2]}/${expParts[1]}/${expParts[0]}`;
                 }
@@ -664,7 +561,7 @@
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
             const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-            link.download = `${isViewingOldReport ? 'Bao_Cao_Date_Cu_' : 'Bao_Cao_Date_7Eleven_'}${new Date().toISOString().slice(0,10)}.xlsx`;
+            link.download = `Bao_Cao_Date_7Eleven_${new Date().toISOString().slice(0,10)}.xlsx`;
             link.click(); URL.revokeObjectURL(link.href);
         }
 
